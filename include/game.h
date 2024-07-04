@@ -34,7 +34,6 @@ namespace breakout {
       unsigned int stage;
 
       bool checkCollision(BallObject& c, GameObject& r);
-      std::pair<float, float> projectPolyGon(const std::vector<glm::vec2>& vertices, const glm::vec2& axis);
       void calculateCollisions();
   };
 };

@@ -2,7 +2,6 @@
 #include "resource.h"
 #include "sprite.h"
 
-
 breakout::Sprite* renderer;
 breakout::Sprite* background;
 breakout::GameObject* player;
@@ -17,6 +16,7 @@ breakout::Game::Game(unsigned int w, unsigned int h) : width(w), height(h), stat
 
 breakout::Game::~Game() {
   delete renderer;
+  delete background;
   delete player;
 }
 
@@ -30,7 +30,7 @@ void breakout::Game::init() {
   breakout::Resource::getShader("sprite").use().setInteger("image", 0);
   breakout::Resource::getShader("sprite").setMatrix4("projection", projection);
 
-  background = new breakout::Sprite(Resource::getShader("sprite"), 4.0f);
+  background = new breakout::Sprite(Resource::getShader("sprite"), width/140.0f);
   renderer = new breakout::Sprite(Resource::getShader("sprite"));
 
   breakout::Resource::loadTexture("assets/textures/background.jpg", false, "background");
@@ -79,20 +79,6 @@ bool breakout::Game::checkCollision(BallObject &c, GameObject &r) {
     }
   }
   return true;
-}
-
-std::pair<float, float> breakout::Game::projectPolyGon(const std::vector<glm::vec2> &vertices,
-                                                       const glm::vec2 &axis) {
-  float min = glm::dot(vertices[0], axis);
-  float max = min;
-
-  for (const auto& vertex : vertices) {
-    float proj = glm::dot(vertex, axis);
-    if (proj < min) min = proj;
-    if (proj > max) max = proj;
-  }
-
-  return std::make_pair(min, max);
 }
 
 void breakout::Game::calculateCollisions() {
@@ -186,7 +172,19 @@ void breakout::Game::processInput(SDL_Event& event, bool& running, float dt) {
 
 void breakout::Game::update(float dt) {
   ball->move(dt, width);
+  ball->timer.update(dt);
   calculateCollisions();
+
+  if (!ball->isDestroyed) {
+    if (ball->position.y >= height) {
+      ball->isDestroyed = true;
+      std::function<void()> callback = []() {
+        ball->reset(player->position + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
+      };
+      ball->timer.start(2, callback);
+    }
+  }
+
 }
 
 void breakout::Game::render() {

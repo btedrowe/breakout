@@ -5,6 +5,7 @@
 
 #include "sprite.h"
 #include "texture.h"
+#include "timer.h"
 
 namespace breakout {
   class GameObject {
@@ -20,6 +21,7 @@ namespace breakout {
       bool isDestroyed;
 
       Texture sprite;
+      Timer timer;
 
       virtual void draw(Sprite& renderer);
       std::vector<glm::vec2> getVertices() const;

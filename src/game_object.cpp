@@ -80,5 +80,6 @@ glm::vec2 breakout::BallObject::move(float dt, unsigned int windowWidth) {
 void breakout::BallObject::reset(glm::vec2 p, glm::vec2 v) {
   position = p;
   velocity = v;
+  isDestroyed = false;
   stuck = true;
 }
