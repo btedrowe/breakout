@@ -30,7 +30,6 @@ void breakout::Game::init() {
   breakout::Resource::getShader("sprite").use().setInteger("image", 0);
   breakout::Resource::getShader("sprite").setMatrix4("projection", projection);
 
-  background = new breakout::Sprite(Resource::getShader("sprite"), width/140.0f);
   renderer = new breakout::Sprite(Resource::getShader("sprite"));
 
   breakout::Resource::loadTexture("assets/textures/background.jpg", false, "background");
@@ -38,6 +37,10 @@ void breakout::Game::init() {
   breakout::Resource::loadTexture("assets/textures/block.png", true, "block");
   breakout::Resource::loadTexture("assets/textures/block_solid.png", true, "block_solid");
   breakout::Resource::loadTexture("assets/textures/paddle.png", true, "paddle");
+
+  background = new breakout::Sprite(Resource::getShader("sprite"),
+                                    static_cast<float>(width)/Resource::getTexture("background").width,
+                                    static_cast<float>(height)/Resource::getTexture("background").height);
 
   stages = std::vector<breakout::GameStage>(4);
   stages[0].load("assets/levels/1.lvl", width, height/2);

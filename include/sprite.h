@@ -10,7 +10,7 @@ namespace breakout {
   class Sprite {
     public:
       Sprite(breakout::Shader shader);
-      Sprite(breakout::Shader shader, const float& scale);
+      Sprite(breakout::Shader shader, const float& scaleX, const float& scaleY);
       ~Sprite();
 
       void drawSprite(breakout::Texture texture,
@@ -21,6 +21,6 @@ namespace breakout {
     private:
       breakout::Shader shader;
       unsigned int quadVAO;
-      void initRenderData(const float& coordScale);
+      void initRenderData(const float& coordScaleX, const float& coordScaleY);
   };
 };

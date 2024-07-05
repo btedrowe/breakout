@@ -3,11 +3,11 @@
 #include <SDL2/SDL_opengl.h>
 
 breakout::Sprite::Sprite(breakout::Shader shader) : shader(shader) {
-  initRenderData(1.0f);
+  initRenderData(1.0f, 1.0f);
 }
 
-breakout::Sprite::Sprite(breakout::Shader shader, const float& scale) : shader(shader) {
-  initRenderData(scale);
+breakout::Sprite::Sprite(breakout::Shader shader, const float& scaleX, const float& scaleY) : shader(shader) {
+  initRenderData(scaleX, scaleY);
 }
 
 breakout::Sprite::~Sprite() {
@@ -42,16 +42,16 @@ void breakout::Sprite::drawSprite(breakout::Texture texture,
   glBindVertexArray(0);
 }
 
-void breakout::Sprite::initRenderData(const float& coordScale) {
+void breakout::Sprite::initRenderData(const float& coordScaleX, const float& coordScaleY) {
   unsigned int VBO;
   float vertices[] = {
-    0.0f, 1.0f, 0.0f, coordScale,
-    1.0f, 0.0f, coordScale, 0.0f,
+    0.0f, 1.0f, 0.0f, coordScaleY,
+    1.0f, 0.0f, coordScaleX, 0.0f,
     0.0f, 0.0f, 0.0f, 0.0f,
 
-    0.0f, 1.0f, 0.0f, coordScale,
-    1.0f, 1.0f, coordScale, coordScale,
-    1.0f, 0.0f, coordScale, 0.0f
+    0.0f, 1.0f, 0.0f, coordScaleY,
+    1.0f, 1.0f, coordScaleX, coordScaleY,
+    1.0f, 0.0f, coordScaleX, 0.0f
   };
   
   glGenVertexArrays(1, &quadVAO);
