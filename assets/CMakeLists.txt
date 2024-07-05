@@ -1,5 +1,12 @@
 set(ASSETS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(ASSETS_DEST_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
-set(ASSETS_SOURCE_DIR ${ASSETS_SOURCE_DIR} PARENT_SCOPE)
-set(ASSETS_DEST_DIR ${ASSETS_DEST_DIR} PARENT_SCOPE)
+add_custom_target(copy_assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE_DIR}/levels ${ASSETS_DEST_DIR}/levels
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE_DIR}/shaders ${ASSETS_DEST_DIR}/shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE_DIR}/textures ${ASSETS_DEST_DIR}/textures
+    COMMENT "Copying assets to build directory"
+)

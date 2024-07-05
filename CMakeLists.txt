@@ -11,16 +11,6 @@ find_package(GLEW REQUIRED)
 add_subdirectory(src)
 add_subdirectory(assets)
 
-add_custom_target(copy_assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE_DIR}/levels ${ASSETS_DEST_DIR}/levels
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE_DIR}/shaders ${ASSETS_DEST_DIR}/shaders
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE_DIR}/textures ${ASSETS_DEST_DIR}/textures
-    COMMENT "Copying assets to build directory"
-)
-
 add_executable(breakout ${BREAKOUT_SOURCES})
 add_dependencies(breakout copy_assets)
 target_include_directories(breakout PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
