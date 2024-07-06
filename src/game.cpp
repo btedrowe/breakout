@@ -12,7 +12,7 @@ const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
 
 const float BALL_RADIUS = 12.5f;
 
-breakout::Game::Game(unsigned int w, unsigned int h) : width(w), height(h), state(GAME_ACTIVE) {}
+breakout::Game::Game(unsigned int w, unsigned int h) : width(w), height(h), win(false), state(GAME_ACTIVE) {}
 
 breakout::Game::~Game() {
   delete renderer;
@@ -85,7 +85,9 @@ bool breakout::Game::checkCollision(BallObject &c, GameObject &r) {
 }
 
 void breakout::Game::calculateCollisions() {
+  win = true;
   for (auto& box : stages[stage].bricks) {
+    win = win && (box.isDestroyed || box.isSolid);
     if (!box.isDestroyed) {
       if (checkCollision(*ball, box)) {
         if (!box.isSolid) {
@@ -97,11 +99,11 @@ void breakout::Game::calculateCollisions() {
         glm::vec2 BBClamped = glm::clamp(BB, -sizeBox, sizeBox);
 
         if (std::abs(BB.x) > std::abs(BB.y)) {
-            ball->velocity.x *= -1.0f;
-            ball->position.x = posBox.x + BBClamped.x + (BB.x > 0 ? 0.0f : -2.0f*ball->radius);
+          ball->velocity.x *= -1.0f;
+          ball->position.x = posBox.x + BBClamped.x + (BB.x > 0 ? 0.0f : -2.0f*ball->radius);
         } else {
-            ball->velocity.y *= -1.0f;
-            ball->position.y = posBox.y + BBClamped.y + (BB.y > 0 ? 0.0f : -2.0f*ball->radius);
+          ball->velocity.y *= -1.0f;
+          ball->position.y = posBox.y + BBClamped.y + (BB.y > 0 ? 0.0f : -2.0f*ball->radius);
         }
         break;
       }
@@ -177,6 +179,15 @@ void breakout::Game::update(float dt) {
   ball->move(dt, width);
   ball->timer.update(dt);
   calculateCollisions();
+
+  if (win) {
+    ball->reset(player->position + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
+    stage++;
+
+    if (stages.size() < stage) {
+      state = GAME_WIN;
+    }
+  }
 
   if (!ball->isDestroyed) {
     if (ball->position.y >= height) {

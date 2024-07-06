@@ -32,6 +32,7 @@ namespace breakout {
     private:
       std::vector<breakout::GameStage> stages;
       unsigned int stage;
+      bool win;
 
       bool checkCollision(BallObject& c, GameObject& r);
       void calculateCollisions();
