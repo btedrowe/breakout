@@ -32,7 +32,7 @@ void breakout::Game::init() {
 
   renderer = new breakout::Sprite(Resource::getShader("sprite"));
 
-  breakout::Resource::loadTexture("assets/textures/background.jpg", false, "background");
+  breakout::Resource::loadTexture("assets/textures/background.png", false, "background");
   breakout::Resource::loadTexture("assets/textures/ball.png", true, "face");
   breakout::Resource::loadTexture("assets/textures/block.png", true, "block");
   breakout::Resource::loadTexture("assets/textures/block_solid.png", true, "block_solid");

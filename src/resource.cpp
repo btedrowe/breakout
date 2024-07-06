@@ -1,12 +1,10 @@
 #include <GL/glew.h>
 #include "resource.h"
+#include "image.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 std::map<std::string, breakout::Texture> breakout::Resource::textures;
 std::map<std::string, breakout::Shader> breakout::Resource::shaders;
@@ -82,10 +80,15 @@ breakout::Texture breakout::Resource::loadTextureFromFile(const char *file, bool
   }
 
   int width, height, nChannels;
-  unsigned char* data = stbi_load(file, &width, &height, &nChannels, 0);
+  unsigned char* data;
+
+  if (!loadPNG(file, &data, &width, &height, &nChannels)) {
+    std::cerr << "Failed to load file: " << file << std::endl;
+  }
 
   texture.generate(width, height, data);
 
-  stbi_image_free(data);
+  delete[] data;
+
   return texture;
 }
