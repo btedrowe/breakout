@@ -51,6 +51,8 @@ void breakout::Game::init() {
   stage = 0;
   glm::vec2 playerPos((width - PLAYER_SIZE.x)/2.0f, height - PLAYER_SIZE.y);
   glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f);
+  glm::vec2 playerPos((width - PLAYER_SIZE.x)*0.5f, height - PLAYER_SIZE.y);
+  glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x*0.5f - BALL_RADIUS, -BALL_RADIUS*2.0f);
 
   player = new GameObject(playerPos, PLAYER_SIZE, breakout::Resource::getTexture("paddle"));
   ball = new BallObject(ballPos, BALL_RADIUS, BALL_INITIAL_VELOCITY, breakout::Resource::getTexture("face"));
@@ -194,6 +196,7 @@ void breakout::Game::update(float dt) {
       ball->isDestroyed = true;
       std::function<void()> callback = []() {
         ball->reset(player->position + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
+        ball->reset(player->position + glm::vec2(PLAYER_SIZE.x*0.5f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
       };
       ball->timer.start(2, callback);
     }

@@ -42,6 +42,7 @@ void breakout::App::run() {
 
     float cTime = SDL_GetTicks();
     dTime = (cTime - pTime)/1000.0f;
+    dTime = (cTime - pTime)*0.001f;
     pTime = cTime;
     
     breakout.processInput(event, running, dTime);
