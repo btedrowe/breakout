@@ -49,8 +49,6 @@ void breakout::Game::init() {
   stages[3].load("assets/levels/4.lvl", width, height/2);
 
   stage = 0;
-  glm::vec2 playerPos((width - PLAYER_SIZE.x)/2.0f, height - PLAYER_SIZE.y);
-  glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f);
   glm::vec2 playerPos((width - PLAYER_SIZE.x)*0.5f, height - PLAYER_SIZE.y);
   glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x*0.5f - BALL_RADIUS, -BALL_RADIUS*2.0f);
 
@@ -86,15 +84,24 @@ bool breakout::Game::checkCollision(BallObject &c, GameObject &r) {
   return true;
 }
 
+void breakout::Game::nextStage() {
+  win = false;
+  ball->reset(player->position + glm::vec2(PLAYER_SIZE.x*0.5f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
+  stage++;
+
+  if (stages.size() < stage) {
+    state = GAME_WIN;
+  }
+}
+
 void breakout::Game::calculateCollisions() {
-  win = true;
   for (auto& box : stages[stage].bricks) {
-    win = win && (box.isDestroyed || box.isSolid);
     if (!box.isDestroyed) {
       if (checkCollision(*ball, box)) {
         if (!box.isSolid) {
           box.isDestroyed = true;
         }
+
         glm::vec2 sizeBox = 0.5f*box.size;
         glm::vec2 posBox = box.position + sizeBox;
         glm::vec2 BB = (ball->position+ball->radius)-posBox;
@@ -180,14 +187,23 @@ void breakout::Game::processInput(SDL_Event& event, bool& running, float dt) {
 void breakout::Game::update(float dt) {
   ball->move(dt, width);
   ball->timer.update(dt);
+  stages[stage].timer.update(dt);
   calculateCollisions();
 
-  if (win) {
-    ball->reset(player->position + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
-    stage++;
+  if (!win) {
+    win = true;
+    for (const auto& box : stages[stage].bricks) {
+      if (!(box.isDestroyed || box.isSolid)) {
+        win = false;
+        break;
+      }
+    }
 
-    if (stages.size() < stage) {
-      state = GAME_WIN;
+    if (win) {
+      std::function<void(void)> callback = [=]() {
+        this->nextStage();
+      };
+      stages[stage].timer.start(2, callback);
     }
   }
 
@@ -195,7 +211,6 @@ void breakout::Game::update(float dt) {
     if (ball->position.y >= height) {
       ball->isDestroyed = true;
       std::function<void()> callback = []() {
-        ball->reset(player->position + glm::vec2(PLAYER_SIZE.x/2.0f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
         ball->reset(player->position + glm::vec2(PLAYER_SIZE.x*0.5f - BALL_RADIUS, -BALL_RADIUS*2.0f), BALL_INITIAL_VELOCITY);
       };
       ball->timer.start(2, callback);

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "game_object.h"
+#include "timer.h"
 #include "sprite.h"
 
 
@@ -16,6 +17,7 @@ namespace breakout {
       bool isComplete();
 
       std::vector<GameObject> bricks;
+      Timer timer;
     private:
       void init(std::vector<std::vector<unsigned int>> tileData, unsigned int stageWidth, unsigned int stageHeight);
   };

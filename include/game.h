@@ -35,6 +35,7 @@ namespace breakout {
       bool win;
 
       bool checkCollision(BallObject& c, GameObject& r);
+      void nextStage();
       void calculateCollisions();
   };
 };
