@@ -5,7 +5,7 @@
 namespace breakout {
   class App {
     public:
-      App(unsigned int w, unsigned int h);
+      App();
       ~App();
 
       bool init();

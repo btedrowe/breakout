@@ -8,5 +8,7 @@ add_custom_target(copy_assets
         ${ASSETS_SOURCE_DIR}/shaders ${ASSETS_DEST_DIR}/shaders
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${ASSETS_SOURCE_DIR}/textures ${ASSETS_DEST_DIR}/textures
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE_DIR}/config ${ASSETS_DEST_DIR}/config
     COMMENT "Copying assets to build directory"
 )

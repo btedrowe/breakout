@@ -2,12 +2,14 @@
 #include "resource.h"
 #include "image.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
 std::map<std::string, breakout::Texture> breakout::Resource::textures;
 std::map<std::string, breakout::Shader> breakout::Resource::shaders;
+std::map<std::string, float> breakout::Resource::configs;
 
 breakout::Shader breakout::Resource::loadShader(const char *vShaderFile,
                                                 const char *fShaderFile, 
@@ -28,6 +30,49 @@ breakout::Texture breakout::Resource::loadTexture(const char *file, bool alpha, 
 
 breakout::Texture breakout::Resource::getTexture(std::string name) {
   return textures[name];
+}
+
+void breakout::Resource::loadConf(const char *file) {
+  std::ifstream confFile;
+  confFile.open(file);
+
+  if (!confFile.is_open()) {
+    std::cerr << "Could not open file: " << file << '\n';
+    return;
+  }
+
+  std::string line;
+  while (std::getline(confFile, line)) {
+    std::istringstream iss(line);
+    std::string key;
+    std::string valueStr;
+
+    if (!(iss >> key >> valueStr)) {
+      std::cerr << "Invalid line format in file " << file << ": " << line << '\n';
+      continue;
+    }
+
+    if (!isValidString(key)) {
+      std::cerr << "Invalid string format in file " << file << ": " << line << '\n';
+      continue;
+    }
+
+    if (!isValidValue(valueStr)) {
+      std::cerr << "Invalid value format in file " << file << ": " << line << '\n';
+      continue;
+    }
+
+    configs[key] = std::stof(valueStr);
+  }
+  confFile.close();
+}
+
+void breakout::Resource::setConf(std::string name, unsigned int &value) {
+  if (configs.count(name)) {
+    if (configs[name] >= 0.0f) {
+      value = static_cast<unsigned int>(configs[name]);
+    }
+  }
 }
 
 void breakout::Resource::clear() {
@@ -91,4 +136,18 @@ breakout::Texture breakout::Resource::loadTextureFromFile(const char *file, bool
   delete[] data;
 
   return texture;
+}
+
+bool breakout::Resource::isValidString(const std::string &str) {
+  return !str.empty() && \
+        std::all_of(str.begin(), str.end(), [](char c) {
+          return std::isalnum(c) || c == '_';
+        });
+}
+
+bool breakout::Resource::isValidValue(const std::string &str) {
+  std::istringstream iss(str);
+  float value;
+
+  return (iss >> value) && (iss.eof());
 }

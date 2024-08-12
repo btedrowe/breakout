@@ -1,7 +1,7 @@
 #include "app.h"
 
 int main() {
-  breakout::App breakout(800, 600);
+  breakout::App breakout;
 
   if (!breakout.init()) {
     return -1;
