@@ -2,7 +2,6 @@
 #include "resource.h"
 #include "image.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -139,10 +138,17 @@ breakout::Texture breakout::Resource::loadTextureFromFile(const char *file, bool
 }
 
 bool breakout::Resource::isValidString(const std::string &str) {
-  return !str.empty() && \
-        std::all_of(str.begin(), str.end(), [](char c) {
-          return std::isalnum(c) || c == '_';
-        });
+  if (str.empty()) {
+    return false;
+  }
+
+  for (const auto& c : str) {
+    if (!std::isalnum(c) && c != '_') {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 bool breakout::Resource::isValidValue(const std::string &str) {

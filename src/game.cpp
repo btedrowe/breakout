@@ -121,6 +121,7 @@ void breakout::Game::calculateCollisions() {
 
   if (!ball->stuck && checkCollision(*ball, *player)) {
     ball->velocity.y = -1.0f * abs(ball->velocity.y);
+    ball->position.y = player->position.y - 2.0f*ball->radius;
     glm::vec2 P2B = (ball->position + glm::vec2(ball->radius)) - (player->position + 0.5f*player->size);
     ball->velocity.x = P2B.x * BALL_INITIAL_VELOCITY.y / P2B.y;
     ball->velocity.x = std::max(-800.0f, std::min(ball->velocity.x, 800.0f));
